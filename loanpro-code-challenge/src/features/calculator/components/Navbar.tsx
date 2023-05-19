@@ -36,7 +36,6 @@ const Navbar: React.FC = () => {
       try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/users/get-balance`, {
           method: "GET",
-          credentials: "include",
           headers: {
             "Content-Type": "application/json",
             'Authorization': `Bearer ${storedToken}`

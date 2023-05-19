@@ -26,7 +26,6 @@ const UserRecords: React.FC = () => {
   const fetchRecords = () => {
     fetch(`${process.env.REACT_APP_API_URL}/operations/records?page=${currentPage}&filter=${filter}&limit=3`,{
       method: 'GET',
-      credentials: 'include',
       headers: {
         "Content-Type": "application/json",
         'Authorization': `Bearer ${token}`
@@ -51,7 +50,6 @@ const UserRecords: React.FC = () => {
     // Send HTTP request to delete the record with the given id
     fetch(`${process.env.REACT_APP_API_URL}/operations/record/${id}`, {
       method: "DELETE",
-      credentials: 'include',
       headers: {
         "Content-Type": "application/json",
         'Authorization': `Bearer ${token}`
