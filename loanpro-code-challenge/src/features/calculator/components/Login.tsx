@@ -48,6 +48,7 @@ const Login: React.FC = () => {
         // LOGIN SUCCESSFUL
         const data = await response.json()
         dispatch(setAuthToken(data.token))
+        localStorage.setItem('authToken', data.token)
         navigate('/new-operation')
       } else {
         // *************

@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { setSelectedOperation, setFirstNum, setSecondNum, setOperationResult } from "../../../app/slices/operations";
 import { setOperationError, clearOperationError } from "../../../app/slices/errors";
@@ -15,7 +14,6 @@ const NewOperation: React.FC = () => {
   const token = useAppSelector((state) => state.user.authToken)
   // Setup dispatch
   const dispatch = useAppDispatch()
-  const navigate = useNavigate()
 
   // Setup handler functions
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -78,31 +76,6 @@ const NewOperation: React.FC = () => {
   // checkers for conditional components
   const isSquareRoot = selectedOperation === "square_root";
   const isRandomString = selectedOperation === "random_string_generation";
-
-  // Attempts to get the user balance. If unsuccessful, the user isn't logged in
-  // Or there's no network connectivity. Either way, redirect to login. 
-  useEffect(() => {
-    const fetchBalance = async () => {
-      try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/users/get-balance`, {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-            'Authorization': `Bearer ${token}`
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch balance");
-        }
-
-      } catch (error) {
-        navigate('/')
-      }
-    };
-    fetchBalance();
-  }, [navigate, token]);
 
   // Cleanup useEffect
   useEffect(() => {
