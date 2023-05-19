@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { setSelectedOperation, setFirstNum, setSecondNum, setOperationResult } from "../../../app/slices/operations";
 import { setOperationError, clearOperationError } from "../../../app/slices/errors";
 import { clearOperationResult } from "../../../app/slices/operations";
+import { setBalance } from "../../../app/slices/user";
 
 const NewOperation: React.FC = () => {
   // Setup subscriptions for all the pieces of state we need for the component.
@@ -12,6 +13,8 @@ const NewOperation: React.FC = () => {
   const error = useAppSelector((state) => state.errors.operationError)
   const result = useAppSelector((state) => state.operations.result)
   const token = useAppSelector((state) => state.user.authToken)
+  const balance = useAppSelector((state) => state.user.balance)
+
   // Setup dispatch
   const dispatch = useAppDispatch()
 
@@ -33,7 +36,7 @@ const NewOperation: React.FC = () => {
       dispatch(setSecondNum(Number(e.target.value)))
     }    
   }
-
+  // Handles submitting the form
   const handleSubmit = () => {
     const apiUrl = process.env.REACT_APP_API_URL;
     const endpoint = `${apiUrl}/operations/request`;
@@ -50,6 +53,27 @@ const NewOperation: React.FC = () => {
         type: selectedOperation
       })
     };
+    // Handles updating the balance after the request was successful
+    const updateBalance = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/users/get-balance`, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${token}`
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch balance");
+        }
+        const data = await response.json()
+        dispatch(setBalance(data.balance))
+
+      } catch (error) {
+        dispatch(setOperationError("Failed to fetch balance"))
+      }
+    }
   
     fetch(endpoint, requestOptions)
       .then(response => response.json())
@@ -63,6 +87,7 @@ const NewOperation: React.FC = () => {
         }
         // Handle the response data here
         dispatch(setOperationResult(data.result))
+        updateBalance()
       })
       .catch(error => {
         console.log(error)
@@ -84,6 +109,30 @@ const NewOperation: React.FC = () => {
     dispatch(clearOperationError())
     dispatch(clearOperationResult())
   }, [])
+
+  useEffect(() => {
+    const updateBalance = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/users/get-balance`, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${token}`
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch balance");
+        }
+        const data = await response.json()
+        dispatch(setBalance(data.balance))
+
+      } catch (error) {
+        dispatch(setOperationError("Failed to fetch balance"))
+      }
+    }
+    updateBalance()
+  },[])
 
 
   return (
@@ -142,6 +191,10 @@ const NewOperation: React.FC = () => {
         <p>{result}</p>
       </div>
     )}
+      <div className="balance-container">
+        <h3>Balance:</h3>
+        <p>{balance}</p>
+      </div>
     </div>
   );
 };

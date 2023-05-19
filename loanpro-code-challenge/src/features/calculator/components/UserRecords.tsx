@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { setOperationRecords, setFilter } from "../../../app/slices/operations";
 import { setOperationRecordsError, clearOperationRecordsError } from "../../../app/slices/errors";
@@ -19,6 +19,8 @@ const UserRecords: React.FC = () => {
   const currentPage = useAppSelector((state) => state.operations.requestedPage)
   const filter = useAppSelector((state) => state.operations.filter)
   const token = useAppSelector((state) => state.user.authToken)
+  const error = useAppSelector((state) => state.errors.operationRecordsError)
+
   console.log(records)
 
   const fetchRecords = () => {
@@ -40,7 +42,7 @@ const UserRecords: React.FC = () => {
   }
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(clearOperationRecordsError())
+    
     // Send HTTP request and retrieve paginated records
     fetchRecords()
   };
@@ -55,9 +57,10 @@ const UserRecords: React.FC = () => {
         'Authorization': `Bearer ${token}`
       },
     })
-      .then((response) => {
+      .then(async (response) => {
         if (response.ok) {
-          dispatch(clearOperationRecordsError())
+          const data = await response.json()
+          dispatch(setOperationRecordsError(data.message))
           fetchRecords()          
         } 
       })
@@ -75,10 +78,18 @@ const UserRecords: React.FC = () => {
       dispatch(setRequestedPage(Number(e.target.value)))
     }
   }
+  // Cleanup
+  useEffect(() => {
+    dispatch(clearOperationRecordsError())
+    
+  }, [])
 
   return (
     <div className="container">
       <h2>User Records</h2>
+      {error && <div className={`alert ${error === "Record deleted successfully" ? 'alert-success' : 'alert-danger'}`}>
+        {error.toString()}
+      </div>}
       <form onSubmit={handleFormSubmit}>
         <div className="form-group">
           <label htmlFor="pageNumber">Page Number:</label>
