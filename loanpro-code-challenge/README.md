@@ -4,6 +4,7 @@ This project is the intended frontend for the API in the following repo: https:/
 It's built with React JS and typescript, using Redux for state management and local storage for persisting data. 
 
 ## Requirements to run
+Default port 80 for docker, 3000 for non-containerized version.
 In order to run the app you can either start up the Docker container with the docker files included, or you can use npm run start after having installed the dependencies. 
 
 ### Docker
