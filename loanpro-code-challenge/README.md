@@ -5,6 +5,7 @@ It's built with React JS and typescript, using Redux for state management and lo
 
 ## Requirements to run
 Default port 80 for docker, 3000 for non-containerized version.
+
 In order to run the app you can either start up the Docker container with the docker files included, or you can use npm run start after having installed the dependencies. 
 
 ### Docker
@@ -13,6 +14,8 @@ Make sure to open the docker-compose file and edit the following env variable to
 - REACT_APP_API_URL=the url for your backend...
 
 Make sure the url does not have a trailing forwardslash!: www.url.com is ok, www.url.com/ is not. 
+
+Then, run the following commands from the loanpro-code-challenge level (cd loanpro-code-challenge if you're at the NTD-code-challenge directory)
 
 - docker-compose build
 - docker-compose up
@@ -23,6 +26,8 @@ Make sure to add an .env file at the root of your project with the following:
 - REACT_APP_API_URL=the url for your backend...
 
 Make sure the url does not have a trailing forwardslash!: www.url.com is ok, www.url.com/ is not. 
+
+Then, run the following commands from the loanpro-code-challenge level (cd loanpro-code-challenge if you're at the NTD-code-challenge directory)
 
 - npm install
 - npm run start
